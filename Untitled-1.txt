@@ -1,0 +1,51 @@
+import sqlite3
+from flask import g , Flask, request
+import json
+app=Flask(__name__)
+from flask import Flask, jsonify
+from flask_cors import CORS, cross_origin
+
+app = Flask(__name__)
+CORS(app, support_credentials=True)
+
+@app.route("/login")
+@cross_origin(supports_credentials=True)
+def login():
+  return jsonify({'success': 'ok'})
+
+if __name__ == "__main__":
+  app.run(host='0.0.0.0', port=8000, debug=True)
+DATABASE = 'C:/Users/ahlam/OneDrive/Desktop/pizzatestdb.db'
+def get_db():
+    db = getattr(g, '_pizzatestdb', None)
+    if db is None:
+        db = g._pizza = sqlite3.connect(DATABASE)
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_pizzatestdb', None)
+    if db is not None:
+        db.close()
+
+def query_db(query, args=(), one=False):
+    cur = get_db().execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv    
+
+@app.route('/')
+def index():
+
+    json_string =json.dumps(query_db('select * from users'))
+    return json_string
+
+@app.route('/api', methods=['POST'])
+def postTest():
+    if not request.json:
+        return "not a json post"
+    
+    return "json post succeeded"
+
+if __name__ == '__main__':
+    app.run()

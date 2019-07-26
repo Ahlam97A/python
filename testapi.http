@@ -1,0 +1,18 @@
+@hostname = localhost:5000
+
+POST http://{{hostname}}/addrec
+Content-Type: application/json
+
+{
+    "size": "large",
+    "qaun":"8"
+}
+###
+
+POST http://{{hostname}}/
+Content-Type: application/json
+
+{
+    
+}
+###
